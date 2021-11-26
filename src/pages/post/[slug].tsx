@@ -1,5 +1,5 @@
 // import { GetStaticPaths, GetStaticProps } from 'next';
-import { Head } from 'next/document';
+import Head from 'next/head';
 
 // import { getPrismicClient } from '../../services/prismic';
 
@@ -35,7 +35,7 @@ export default function Post() {
       </Head>
 
       <main className={styles.container}>
-        <div className={style.posts}>
+        <div className={styles.posts}>
 
         </div>
       </main>

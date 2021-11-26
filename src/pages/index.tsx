@@ -1,20 +1,25 @@
-import { GetStaticProps } from 'next';
+import Prismic from '@prismicio/client'
 import Head from 'next/head';
+import Link from 'next/link';
 
+import { GetStaticProps } from 'next';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
-// interface Post {
-//   uid?: string;
-//   first_publication_date: string | null;
-//   data: {
-//     title: string;
-//     subtitle: string;
-//     author: string;
-//   };
-// }
+
+type Post = {
+  slug: string;
+  title: string;
+  content: string;
+  author: string;
+  updatedAt: string;
+}
+
+interface PostsProps {
+  posts: Post[];
+}
 
 // interface PostPagination {
 //   next_page: string;
@@ -25,7 +30,7 @@ import styles from './home.module.scss';
 //   postsPagination: PostPagination;
 // }
 
-export default function Home() {
+export default function Home({ posts }: PostsProps) {
   return (
     <>
       <Head>
@@ -34,21 +39,50 @@ export default function Home() {
 
       <main className={styles.container}>
         <div className={styles.posts}>
-          <h1>Como utilizar Hooks</h1>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
-          <div>
-            <p>15 Mar 2021</p>
-            <p>Leonardo Dias</p>
-          </div>
+          { posts.map(post => (
+            <Link key={post.slug} href={`/posts/${post.slug}`}>
+              <h1>{post.title}</h1>
+              <p>{post.content}</p>
+              <div>
+                <time>{post.updatedAt}</time>
+                <p>{post.author}</p>
+              </div>
+            </Link>
+          )) }
         </div>
       </main>
     </>
-  )
+  );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
 
-//   // TODO
-// };
+  const response = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts')
+  ], {
+    fetch: ['posts.title', 'posts.content', 'posts.author'],
+    pageSize: 100,
+  })
+
+  const posts = response.results.map(post => {
+    return {
+      slug: post.uid,
+      title: post.data.title,
+      author: post.data.author,
+      content: post.data.content.find(content => content.type === 'paragraph')?.body ?? '',
+      updateAt: new Date(post.first_publication_date).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      })
+    };
+  });
+
+  return {
+    props: {
+      posts
+    },
+    revalidate: 86400
+  };
+};
