@@ -40,13 +40,13 @@ export default function Home({ posts }: PostsProps) {
       <main className={styles.container}>
         <div className={styles.posts}>
           { posts.map(post => (
-            <Link key={post.slug} href={`/posts/${post.slug}`}>
-              <h1>{post.title}</h1>
-              <p>{post.content}</p>
-              <div>
-                <time>{post.updatedAt}</time>
+            <Link key={post.slug} href={`/posts/${post.slug}`}> 
+              <a>
+                <h1>{post.title}</h1>
+                <p>{post.content}</p>
+                <p>{post.updatedAt}</p>
                 <p>{post.author}</p>
-              </div>
+              </a>
             </Link>
           )) }
         </div>
@@ -70,7 +70,7 @@ export const getStaticProps: GetStaticProps = async () => {
       slug: post.uid,
       title: post.data.title,
       author: post.data.author,
-      content: post.data.content.find(content => content.type === 'paragraph')?.body ?? '',
+      content: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
       updateAt: new Date(post.first_publication_date).toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'long',
@@ -78,6 +78,8 @@ export const getStaticProps: GetStaticProps = async () => {
       })
     };
   });
+
+  console.log(posts)
 
   return {
     props: {
