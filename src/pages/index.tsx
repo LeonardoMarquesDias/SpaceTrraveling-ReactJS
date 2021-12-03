@@ -43,8 +43,8 @@ export default function Home({ posts }: PostsProps) {
             <Link key={post.slug} href={`/posts/${post.slug}`}> 
               <a>
                 <h1>{post.title}</h1>
-                <p>{post.content}</p>
-                <p>{post.updatedAt}</p>
+                
+                <time>{post.updatedAt}</time>
                 <p>{post.author}</p>
               </a>
             </Link>
