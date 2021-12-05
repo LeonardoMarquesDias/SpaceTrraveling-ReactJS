@@ -42,8 +42,7 @@ export default function Home({ posts }: PostsProps) {
           { posts.map(post => (
             <Link key={post.slug} href={`/posts/${post.slug}`}> 
               <a>
-                <h1>{post.title}</h1>
-                
+                <h1>{post.title}</h1>          
                 <time>{post.updatedAt}</time>
                 <p>{post.author}</p>
               </a>
@@ -85,6 +84,5 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       posts
     },
-    revalidate: 86400
   };
 };
