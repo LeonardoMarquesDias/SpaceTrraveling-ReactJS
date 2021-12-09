@@ -5,16 +5,22 @@ import Link from 'next/link';
 import { GetStaticProps } from 'next';
 import { getPrismicClient } from '../services/prismic';
 
+import { FiCalendar, FiUser } from 'react-icons/fi';
+import { format } from 'date-fns';
+import enGb from 'date-fns/locale/en-Gb';
+
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
 
 type Post = {
-  slug: string;
-  title: string;
-  content: string;
-  author: string;
-  updatedAt: string;
+  uid?: string;
+  first_publication_date: string | null;
+  data: {
+    title: string;
+    subtitle: string;
+    author: string;
+  };
 }
 
 interface PostsProps {
@@ -42,9 +48,25 @@ export default function Home({ posts }: PostsProps) {
           { posts.map(post => (
             <Link key={post.slug} href={`/posts/${post.slug}`}> 
               <a>
-                <h1>{post.title}</h1>          
-                <time>{post.updatedAt}</time>
-                <p>{post.author}</p>
+                <h2>{post.data.title}</h2>  
+                <p>{post.data.subtitle}</p>        
+                <div>
+                  <span>
+                    <FiCalendar size={20} color="#BBBBBB" />
+                    {format(
+                      new Date(post.first_publication_date),
+                      'MMM dd yyyy',
+                      {
+                        locale: enGb,
+                      }
+                    )}
+                  </span>
+
+                  <span>
+                    <FiUser size={20} color="#BBBBBB" />
+                    {post.data.author}
+                  </span>
+                </div>
               </a>
             </Link>
           )) }
@@ -57,33 +79,28 @@ export default function Home({ posts }: PostsProps) {
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
 
-  const response = await prismic.query([
+  const postResponse = await prismic.query([
     Prismic.predicates.at('document.type', 'posts')
   ], {
-    fetch: ['posts.title', 'posts.content', 'posts.author'],
-    pageSize: 100,
+    fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+    pageSize: 20,
   })
 
-  const posts = response.results.map(post => {
+  const posts = postResponse.results.map(post => {
     return {
-      slug: post.uid,
-      title: post.data.title,
-      author: post.data.author,
-      content: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
-      updateAt: new Date(post.first_publication_date).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-      })
+      uid: post.uid,
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
     };
   });
-
-  console.log(posts)
 
   return {
     props: {
       posts
     },
-    revalidate
   };
 };
