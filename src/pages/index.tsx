@@ -40,7 +40,7 @@ export default function Home({ posts }: PostsProps) {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>Home | SpaceTraveling</title>
       </Head>
 
       <main className={styles.container}>

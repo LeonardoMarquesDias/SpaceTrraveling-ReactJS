@@ -1,5 +1,5 @@
 .container {
-  max-width: 1120px;
+  max-width: 764px;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -7,4 +7,19 @@
 .posts {
   max-width: 720px;
   margin: 5rem auto 0;
+
+  & + a {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-700);
+  }
+
+  p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  >div {
+    display: flex;
+  }
 }
