@@ -44,33 +44,35 @@ export default function Home({ posts }: PostsProps) {
       </Head>
 
       <main className={styles.container}>
-        <div className={styles.posts}>
-          { posts.map(post => (
-            <Link key={post.slug} href={`/posts/${post.slug}`}> 
-              <a>
-                <h2>{post.data.title}</h2>  
-                <p>{post.data.subtitle}</p>        
-                <div>
-                  <span>
-                    <FiCalendar size={20} color="#BBBBBB" />
-                    {format(
-                      new Date(post.first_publication_date),
-                      'MMM dd yyyy',
-                      {
-                        locale: enGb,
-                      }
-                    )}
-                  </span>
+        <section>
+          {posts.map(post => (
+            <Link href={`/posts/${post.uid}`}> 
+              <article className={styles.posts} key={post.uid}>
+                <a>
+                  <h1>{post.data.title}</h1>  
+                  <p>{post.data.subtitle}</p>        
+                  <div>
+                    <time>
+                      <FiCalendar size={20} color="#BBBBBB" />
+                      {format(
+                        new Date(post.first_publication_date),
+                        'MMM dd yyyy',
+                        {
+                          locale: enGb,
+                        }
+                      )}
+                    </time>
 
-                  <span>
-                    <FiUser size={20} color="#BBBBBB" />
-                    {post.data.author}
-                  </span>
-                </div>
-              </a>
+                    <span>
+                      <FiUser size={20} color="#BBBBBB" />
+                      {post.data.author}
+                    </span>
+                  </div>
+                </a>
+              </article>
             </Link>
-          )) }
-        </div>
+          ))}
+        </section>
       </main>
     </>
   );
