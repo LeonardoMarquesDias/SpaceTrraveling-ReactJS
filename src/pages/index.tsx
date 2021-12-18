@@ -46,8 +46,8 @@ export default function Home({ posts }: PostsProps) {
       <main className={styles.container}>
         <section>
           {posts.map(post => (
-            <Link href={`/posts/${post.uid}`}> 
-              <article className={styles.posts} key={post.uid}>
+            <article className={styles.posts} key={post.uid}>
+              <Link href={`/posts/${post.uid}`}> 
                 <a>
                   <h1>{post.data.title}</h1>  
                   <p>{post.data.subtitle}</p>        
@@ -69,8 +69,8 @@ export default function Home({ posts }: PostsProps) {
                     </span>
                   </div>
                 </a>
-              </article>
-            </Link>
+              </Link>
+            </article>
           ))}
         </section>
       </main>
@@ -104,5 +104,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       posts
     },
+    revalidate
   };
 };
