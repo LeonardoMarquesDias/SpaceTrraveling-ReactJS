@@ -44,7 +44,7 @@ export default function Home({ postsPagination }: HomeProps) {
         }
       ),
     };
-  });
+  })
 
   const [posts, setPosts] = useState<Post[]>(formattedPost);
   const [nextPage, setNextPage] = useState(postsPagination.next_page);
@@ -53,11 +53,11 @@ export default function Home({ postsPagination }: HomeProps) {
   async function handleNextPage(): Promise<void> {
     if (currentPage !== 1 && nextPage === null) {
       return;
-    };
+    } 
 
     const postsResults = await fetch(`${nextPage}`).then(response =>
       response.json()
-    );
+    )
 
     setNextPage(postsResults.next_page);
     setCurrentPage(postsResults.page);
@@ -78,7 +78,7 @@ export default function Home({ postsPagination }: HomeProps) {
           author: post.data.author,
         },
       };
-    });
+    })
 
     setPosts([...posts, ...newPosts]);
   };
@@ -89,9 +89,9 @@ export default function Home({ postsPagination }: HomeProps) {
         <title>Home | SpaceTraveling</title>
       </Head>
 
-      <main className={commonStyles.content}>
-        <Header />
+      <Header />
 
+      <main className={commonStyles.content}>
         <article className={styles.posts}>
           {posts.map(post => (
             <Link href={`/post/${post.uid}`} key={post.uid}>
@@ -116,14 +116,13 @@ export default function Home({ postsPagination }: HomeProps) {
                 </ul>
               </a>
             </Link>
-          ))};
+          ))}
 
           {nextPage && (
             <button type="button" onClick={handleNextPage}>
               Carregar mais posts
             </button>
           )}
-
         </article>
       </main>
     </>
@@ -135,10 +134,10 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const postsResponse = await prismic.query([
     Prismic.predicates.at('document.type', 'posts')
-  ], {
-    fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
+  ],{
     pageSize: 3,
-  });
+    orderings: '[document.last_publication_date desc]',
+  })
 
   const posts = postsResponse.results.map(post => {
     return {
@@ -150,12 +149,12 @@ export const getStaticProps: GetStaticProps = async () => {
         author: post.data.author,
       },
     };
-  });
+  })
 
   const postsPagination = {
     next_page: postsResponse.next_page,
     results: posts,
-  };
+  }
 
   return {
     props: {
